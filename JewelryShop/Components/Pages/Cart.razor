@@ -1,0 +1,128 @@
+@page "/cart"
+@inject JewelryShop.Services.CartService CartSvc
+
+<div class="container">
+    <div class="navbar">
+        <div class="logo">
+            <a href="/"><img src="images/logo2.png" width="300px"></a>
+        </div>
+
+        <nav>
+            <ul id="MenuItems" style="max-height:@(menuOpen ? "500px" : "0px")">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/account">Account</a></li>
+            </ul>
+        </nav>
+
+        <a href="/cart">
+            <img src="images/cart.png" width="30px" height="30px" style="z-index:1100; position:relative;">
+        </a>
+
+        <img src="images/menu.png" class="menu-icon" style="cursor:pointer;" @onclick="ToggleMenu" />
+    </div>
+</div>
+
+<div class="small-container cart-page">
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+        </tr>
+
+        @if (CartSvc.Lines.Count == 0)
+        {
+            <tr>
+                <td colspan="3" style="padding:20px; color:#8d4c55;">
+                    Your cart is empty.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var line in CartSvc.Lines)
+            {
+                <tr>
+                    <td>
+                        <div class="cart-info">
+                            <img src="@line.ImageUrl">
+                            <div>
+                                <p>@line.Name</p>
+                                <small>Price: @line.Price.ToString("0.00")€</small>
+                                <br>
+                                <a href="javascript:void(0)" @onclick="() => Remove(line.ProductId)">Remove</a>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <input type="number"
+                               min="1"
+                               value="@line.Quantity"
+                               @onchange="(e) => ChangeQty(line.ProductId, e.Value)" />
+                    </td>
+
+                    <td>@((line.Price * line.Quantity).ToString("0.00"))€</td>
+                </tr>
+            }
+        }
+    </table>
+
+    @if (CartSvc.Lines.Count > 0)
+    {
+        <div class="total-price">
+            <table>
+                <tr>
+                    <td>Subtotal</td>
+                    <td>@CartSvc.Subtotal().ToString("0.00")€</td>
+                </tr>
+                <tr>
+                    <td>Tax</td>
+                    <td>@CartSvc.Tax().ToString("0.00")€</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>@CartSvc.Total().ToString("0.00")€</td>
+                </tr>
+            </table>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(msg))
+        {
+            <p style="margin-top:10px; font-size:13px; color:#a33;">@msg</p>
+        }
+    }
+</div>
+
+<div class="footer">
+    <!-- footer  -->
+</div>
+
+@code {
+    private bool menuOpen = false;
+    private void ToggleMenu() => menuOpen = !menuOpen;
+
+    private string msg = "";
+
+    private async Task Remove(int productId)
+    {
+        msg = "";
+        await CartSvc.RemoveLineAsync(productId);
+    }
+
+    private async Task ChangeQty(int productId, object? raw)
+    {
+        msg = "";
+
+        if (raw == null) return;
+        if (!int.TryParse(raw.ToString(), out var newQty)) newQty = 1;
+
+        var (ok, m) = await CartSvc.SetQuantityAsync(productId, newQty);
+        if (!ok) msg = m;
+    }
+}
+
+

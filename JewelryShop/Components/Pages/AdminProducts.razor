@@ -1,0 +1,236 @@
+@page "/admin/products"
+@rendermode InteractiveServer
+
+@using JewelryShop.Models
+@using JewelryShop.Data
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject JewelryShop.Services.AdminSession AdminSession
+@inject AppDbContext Db
+@inject NavigationManager Nav
+
+<h3>Διαχείριση Προϊόντων</h3>
+
+@if (!AdminSession.IsLoggedIn)
+{
+    <p><b>Access denied.</b> Please verify your credentials.</p>
+    <button @onclick="GoToLogin">Go back to Login</button>
+}
+else
+{
+    <button @onclick="NewProduct">Νέο Προϊόν</button>
+
+    <table border="1" style="margin-top:10px; width:100%;">
+        <tr>
+            <th>Id</th>
+            <th>Όνομα</th>
+            <th>Τιμή</th>
+            <th>Φωτο</th>
+            <th>Rating</th>
+            <th>Ενέργειες</th>
+        </tr>
+
+        @foreach (var p in products)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Name</td>
+                <td>@p.Price.ToString("0.00")€</td>
+
+                <td>
+                    @if (!string.IsNullOrWhiteSpace(p.ImageUrl))
+                    {
+                        <img src="@p.ImageUrl"
+                             style="width:60px;height:60px;object-fit:cover;border-radius:10px;" />
+                    }
+                </td>
+
+                <td>
+                    <div class="rating">
+                        @RenderStars(p.Rating)
+                        <span style="margin-left:8px; font-size:13px; opacity:0.8;">
+                            (@p.Rating.ToString("0.0"))
+                        </span>
+                    </div>
+                </td>
+
+                <td>
+                    <button @onclick="() => EditProduct(p)">Edit</button>
+                    <button @onclick="() => DeleteProduct(p)">Delete</button>
+                </td>
+            </tr>
+        }
+    </table>
+
+    @if (editing)
+    {
+        <h4 style="margin-top:16px;">Φόρμα Προϊόντος</h4>
+
+        <div style="max-width: 420px;">
+            <div>
+                <label>Όνομα</label><br />
+                <input @bind="current.Name" />
+            </div>
+
+            <div style="margin-top:8px;">
+                <label>Τιμή</label><br />
+                <InputNumber TValue="decimal" @bind-Value="current.Price" step="0.01" />
+            </div>
+
+            <div style="margin-top:8px;">
+                <label>Περιγραφή</label><br />
+                <input @bind="current.Description" />
+            </div>
+
+            <div style="margin-top:8px;">
+                <label>Stock Quantity</label><br />
+                <InputNumber TValue="int" @bind-Value="current.Quantity" min="0" step="1" />
+            </div>
+
+            <div style="margin-top:8px;">
+                <label>Φωτογραφία (Image URL)</label><br />
+                <input @bind="current.ImageUrl" placeholder="images/earring1.jpg" />
+
+                @if (!string.IsNullOrWhiteSpace(current.ImageUrl))
+                {
+                    <div style="margin-top:8px;">
+                        <img src="@current.ImageUrl"
+                             style="width:120px;height:120px;object-fit:cover;border-radius:12px;" />
+                    </div>
+                }
+            </div>
+
+            <div style="margin-top:8px;">
+                <label>Rating (0–5)</label><br />
+
+                <InputNumber TValue="decimal"
+                             @bind-Value="current.Rating"
+                             min="0"
+                             max="5"
+                             step="0.5" />
+
+                <div class="rating" style="margin-top:6px;">
+                    @RenderStars(current.Rating)
+                    <span style="margin-left:8px; font-size:13px; opacity:0.8;">
+                        (@current.Rating.ToString("0.0"))
+                    </span>
+                </div>
+            </div>
+
+            <div style="margin-top:12px;">
+                <button @onclick="Save">Save</button>
+                <button @onclick="Cancel" style="margin-left:8px;">Cancel</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private List<Product> products = new();
+    private Product current = new();
+    private bool editing = false;
+
+    protected override void OnInitialized()
+    {
+        products = Db.Products.ToList();
+    }
+
+    private void GoToLogin()
+        => Nav.NavigateTo("/admin/login", forceLoad: true);
+
+    private void NewProduct()
+    {
+        current = new Product
+        {
+            Rating = 0m,
+            ImageUrl = "",
+            Quantity = 0,
+            Description = ""
+        };
+        editing = true;
+    }
+
+    private void EditProduct(Product p)
+    {
+        // copy ώστε Cancel να μη πειράζει DB entity
+        current = new Product
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            ImageUrl = p.ImageUrl,
+            Rating = p.Rating,
+            Quantity = p.Quantity
+        };
+
+        editing = true;
+    }
+
+    private void Save()
+    {
+        // clamp 0..5
+        if (current.Rating < 0) current.Rating = 0;
+        if (current.Rating > 5) current.Rating = 5;
+
+        // round to nearest 0.5
+        current.Rating = Math.Round(current.Rating * 2, MidpointRounding.AwayFromZero) / 2;
+
+        if (current.Id == 0)
+        {
+            Db.Products.Add(current);
+        }
+        else
+        {
+            var dbItem = Db.Products.FirstOrDefault(x => x.Id == current.Id);
+            if (dbItem != null)
+            {
+                dbItem.Name = current.Name;
+                dbItem.Description = current.Description;
+                dbItem.Price = current.Price;
+                dbItem.ImageUrl = current.ImageUrl;
+                dbItem.Rating = current.Rating;
+                dbItem.Quantity = current.Quantity;
+            }
+        }
+
+        Db.SaveChanges();
+        products = Db.Products.ToList();
+        editing = false;
+        current = new Product();
+    }
+
+    private void DeleteProduct(Product p)
+    {
+        Db.Products.Remove(p);
+        Db.SaveChanges();
+        products = Db.Products.ToList();
+    }
+
+    private void Cancel()
+    {
+        editing = false;
+        current = new Product();
+    }
+
+    private RenderFragment RenderStars(decimal rating) => builder =>
+    {
+        var full = (int)Math.Floor(rating);
+        var hasHalf = rating - full >= 0.5m;
+
+        var seq = 0;
+        for (int i = 1; i <= 5; i++)
+        {
+            builder.OpenElement(seq++, "i");
+
+            if (i <= full)
+                builder.AddAttribute(seq++, "class", "fa-solid fa-star");
+            else if (i == full + 1 && hasHalf)
+                builder.AddAttribute(seq++, "class", "fa-solid fa-star-half-stroke");
+            else
+                builder.AddAttribute(seq++, "class", "fa-regular fa-star");
+
+            builder.CloseElement();
+        }
+    };
+}

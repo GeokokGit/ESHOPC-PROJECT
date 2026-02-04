@@ -1,0 +1,172 @@
+@page "/products"
+@using JewelryShop.Data
+@using JewelryShop.Models
+@inject AppDbContext Db
+@inject JewelryShop.Services.CartService CartSvc
+@inject NavigationManager Nav
+
+<div class="container">
+    <div class="navbar">
+        <div class="logo">
+            <img src="images/logo2.png" width="300px">
+        </div>
+
+        <nav>
+            <ul id="MenuItems">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/account">Account</a></li>
+            </ul>
+        </nav>
+
+        <a href="/cart">
+            <img src="images/cart.png" width="30px" height="30px" style="z-index: 1100; position: relative;">
+        </a>
+
+        <img src="images/menu.png" class="menu-icon" style="cursor:pointer;" @onclick="MenuToggle">
+    </div>
+</div>
+
+<div class="small-container">
+    <div class="row row-2">
+        <h2>All Products</h2>
+
+        <select @bind="sortOption" @bind:after="OnSortChanged">
+            <option value="default">Default Sorting</option>
+            <option value="price">Sort by price</option>
+            <option value="rating">Sort by rating</option>
+            <option value="name">Sort by name</option>
+        </select>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(msg))
+    {
+        <p style="padding:10px; color:#a33; font-size:14px;">@msg</p>
+    }
+
+    <div class="row">
+        @if (products.Count == 0)
+        {
+            <p style="font-size:18px; padding:20px; color:#8d4c55;">
+                Δεν υπάρχουν προϊόντα στη βάση.
+            </p>
+        }
+        else
+        {
+            @foreach (var p in products)
+            {
+                var link = IsSilverLeaf(p) ? "/product-details" : "#";
+
+                <div class="col-4">
+                    <a href="@link">
+                        <img src="@p.ImageUrl">
+                    </a>
+
+                    <a href="@link">
+                        <h4>@p.Name</h4>
+                    </a>
+
+                    <div class="rating">
+                        @{
+                            var fullStars = (int)Math.Floor(p.Rating);
+                            var hasHalf = p.Rating - fullStars >= 0.5m;
+                        }
+
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= fullStars)
+                            {
+                                <i class="fa-solid fa-star"></i>
+                            }
+                            else if (i == fullStars + 1 && hasHalf)
+                            {
+                                <i class="fa-solid fa-star-half-stroke"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-regular fa-star"></i>
+                            }
+                        }
+                    </div>
+
+                    <p>@p.Price.ToString("0.00")€</p>
+
+                    <button class="button"
+                            style="margin-top:8px;"
+                            disabled="@(p.Quantity <= 0)"
+                            @onclick="() => AddToCart(p.Id)">
+                        @(p.Quantity <= 0 ? "Out of stock" : "Add To Cart")
+                    </button>
+
+                    <p style="font-size:12px; opacity:0.8; margin-top:6px;">
+                        Stock: @p.Quantity
+                    </p>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="page-button">
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>4</span>
+        <span>&#8594;</span>
+    </div>
+</div>
+
+<div class="footer">
+    <!-- footer  -->
+</div>
+
+@code {
+    private bool menuOpen = false;
+    private string sortOption = "default";
+    private List<Product> products = new();
+    private string msg = "";
+
+    protected override void OnInitialized()
+    {
+        LoadProducts();
+    }
+
+    private void MenuToggle() => menuOpen = !menuOpen;
+    private void OnSortChanged() => LoadProducts();
+
+    private void LoadProducts()
+    {
+        IQueryable<Product> q = Db.Products;
+
+        q = sortOption switch
+        {
+            "price" => q.OrderBy(x => x.Price),
+            "rating" => q.OrderByDescending(x => x.Rating),
+            "name" => q.OrderBy(x => x.Name),
+            _ => q.OrderBy(x => x.Id)
+        };
+
+        products = q.ToList();
+    }
+
+    private static bool IsSilverLeaf(Product p)
+        => p.Name != null && p.Name.Trim().ToLower() == "silver leaf earrings";
+
+    private async Task AddToCart(int productId)
+    {
+        msg = "";
+        var (ok, m) = await CartSvc.AddAsync(productId, 1);
+        if (ok)
+        {
+            Nav.NavigateTo("/cart");
+        }
+        else
+        {
+            msg = m;
+            LoadProducts(); 
+        }
+    }
+}
+
+

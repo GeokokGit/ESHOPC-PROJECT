@@ -1,0 +1,313 @@
+﻿
+@page "/"
+
+<div class="header">
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="/"><img src="images/logo2.png" width="300px"></a>
+            </div>
+
+            <nav>
+                <ul id="MenuItems" style="max-height:@MenuMaxHeight;">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/products">Products</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/account">Account</a></li>
+                </ul>
+            </nav>
+
+            <a href="/cart">
+                <img src="images/cart.png" width="30px" height="30px" style="z-index:1100; position:relative;">
+            </a>
+
+            <img src="images/menu.png" class="menu-icon" @onclick="ToggleMenu" />
+        </div>
+
+        <div class="row">
+            <div class="col-2">
+                <h1>Jewelry with a soul, handmade with love.</h1>
+                <p>Every jewel holds a whisper of the heart.</p>
+                <a href="/products" class="button">Explore Now &#8594;</a>
+            </div>
+
+            <div class="col-2">
+                <img src="images/face picture.png" width="500px">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------featured categories ------>
+<div class="categories">
+    <div class="small-container">
+        <div class="row">
+            <div class="col-3">
+                <img src="images/bracelets category.png">
+            </div>
+            <div class="col-3">
+                <img src="images/necklace  category.png">
+            </div>
+            <div class="col-3">
+                <img src="images/ring category.jpg">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-------featured products ------>
+<div class="small-container">
+    <h2 class="title">Featured Products</h2>
+
+    <div class="row">
+        <div class="col-4">
+            <img src="images/ring 1.jpg">
+            <h4>Golden Ring</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>100.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/bracelet1.jpg">
+            <h4>Silver Bracelet</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star-half-stroke"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>150.00€</p>
+        </div>
+
+        <div class="col-4">
+            <a href="/products/1">
+                <img src="images/earring1.jpg">
+            </a>
+            <a href="/products/1">
+                <h4>Silver Leaf Earrings</h4>
+            </a>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>95.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/necklace 1 (2).jpg">
+            <h4>Rose Gold Necklace</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star-half-stroke"></i>
+            </div>
+            <p>75.00€</p>
+        </div>
+    </div>
+
+    <!-------New products ------>
+    <h2 class="title">New Products</h2>
+
+    <div class="row">
+        <div class="col-4">
+            <img src="images/ring4.jpg">
+            <h4>Golden Stackable Ring</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star-half-stroke"></i>
+            </div>
+            <p>200.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/bracelet3.jpg">
+            <h4>Silver Hearts Bracelet</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>125.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/dragon bracelet.jpg">
+            <h4>Metal Dragon Bracelet</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>35.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/ring3.jpg">
+            <h4>Metal Dolphin Tail Ring</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star-half-stroke"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>40.00€</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <img src="images/gold seashorse necklace.jpg">
+            <h4>Golden Seahorse Necklace</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>180.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/snake earrings.jpg">
+            <h4>Brass Snake Earrings</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star-half-stroke"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>20.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/sword earings.jpg">
+            <h4>Stainless Steel Sword Earrings</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star"></i>
+            </div>
+            <p>30.00€</p>
+        </div>
+
+        <div class="col-4">
+            <img src="images/phoenix necklace.jpg">
+            <h4>Gold Plated Phoenix Necklace</h4>
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-regular fa-star-half-stroke"></i>
+            </div>
+            <p>45.00€</p>
+        </div>
+    </div>
+</div>
+
+<!------Deal------>
+<div class="Deal">
+    <div class="small-container">
+        <div class="row">
+            <div class="col-2">
+                <img src="images/deal1.jpg" class="deal-img">
+            </div>
+
+            <div class="col-2">
+                <p>Only Available on Aurora Jewelry</p>
+                <h1>Pendant With Green Peacock Pearl</h1>
+
+                <small>
+                    Materials: Glass, Silver, Stone <br>
+                    Gemstone: Pearl <br>
+                    Style: Art nouveau <br>
+                    Can be personalized <br>
+                    Pendant width: 23 Millimeters; <br>
+                    Pendant height: 29 Millimeters <br>
+                </small>
+
+                <a href="/cart" class="button">Buy Now &#8594;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----footer----->
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="footer-col-1">
+                <h3>Download Our App</h3>
+                <p>Download for mobile</p>
+                <div class="app-logo">
+                    <a href="https://www.apple.com/app-store/"><i class="fa-brands fa-app-store-ios fa-3x"></i></a>
+                    <a href="https://play.google.com/store/"><i class="fa-brands fa-google-play fa-3x"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col-2">
+                <img src="images/logo2.png">
+                <p>We Look Forward To Deliver The Finest Jewelry To Your Hands</p>
+            </div>
+
+            <div class="footer-col-3">
+                <h3>Useful Links</h3>
+                <ul>
+                    <li>Coupons</li>
+                    <li>Blog</li>
+                    <li>Return Policy</li>
+                    <li>Work With Us</li>
+                </ul>
+            </div>
+
+            <div class="footer-col-4">
+                <h3>Join our Socials</h3>
+                <ul>
+                    <li><a href="https://www.facebook.com/"><i class="fa-brands fa-facebook fa-xl"></i></a></li>
+                    <li><a href="https://x.com/"><i class="fa-brands fa-x-twitter fa-xl"></i></a></li>
+                    <li><a href="https://www.instagram.com/"><i class="fa-brands fa-instagram fa-xl"></i></a></li>
+                    <li><a href="https://www.tiktok.com/"><i class="fa-brands fa-tiktok fa-xl"></i></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+        <p class="copyright">Copyright 2025-Aurora Jewelry | All Rights Reserved</p>
+    </div>
+</div>
+
+@code {
+    private bool menuOpen = false;
+
+    private string MenuMaxHeight => menuOpen ? "500px" : "0px";
+
+    private void ToggleMenu()
+    {
+        menuOpen = !menuOpen;
+    }
+}

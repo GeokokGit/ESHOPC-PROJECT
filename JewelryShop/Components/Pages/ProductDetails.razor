@@ -1,0 +1,112 @@
+@page "/product-details"
+@inject JewelryShop.Services.CartService CartSvc
+@inject JewelryShop.Data.AppDbContext Db
+@inject NavigationManager Nav
+
+<div class="container">
+    <div class="navbar">
+        <div class="logo">
+            <a href="/"><img src="images/logo2.png" width="300px"></a>
+        </div>
+
+        <nav>
+            <ul id="MenuItems" style="max-height:@(menuOpen ? "500px" : "0px")">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/account">Account</a></li>
+            </ul>
+        </nav>
+
+        <a href="/cart">
+            <img src="images/cart.png" width="30px" height="30px" style="z-index: 1100; position: relative;">
+        </a>
+
+        <img src="images/menu.png" class="menu-icon" style="cursor:pointer;" @onclick="ToggleMenu" />
+    </div>
+</div>
+
+<div class="small-container single-product">
+    <div class="row">
+        <div class="col-2">
+            <img src="@MainImage" width="100%" id="ProductImg" />
+
+            <div class="small-img-row">
+                <div class="small-img-col">
+                    <img src="images/image-gallery0.jpg" width="100%" class="small-img" style="cursor:pointer;"
+                         @onclick='() => SelectImage("images/image-gallery0.jpg")' />
+                </div>
+                <div class="small-img-col">
+                    <img src="images/image-gallery1.jpg" width="100%" class="small-img" style="cursor:pointer;"
+                         @onclick='() => SelectImage("images/image-gallery1.jpg")' />
+                </div>
+                <div class="small-img-col">
+                    <img src="images/image-gallery2.jpg" width="100%" class="small-img" style="cursor:pointer;"
+                         @onclick='() => SelectImage("images/image-gallery2.jpg")' />
+                </div>
+                <div class="small-img-col">
+                    <img src="images/image-gallery3.jpg" width="100%" class="small-img" style="cursor:pointer;"
+                         @onclick='() => SelectImage("images/image-gallery3.jpg")' />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-2">
+            <p>Home/ Earrings</p>
+            <h1>Silver Leaf Earrings</h1>
+            <h4>95.00€</h4>
+
+            <select>
+                <option>Select Size</option>
+                <option>One Size</option>
+            </select>
+
+            <input type="number" min="1" @bind="qty" />
+
+            <button class="button" @onclick="AddLeafToCart">
+                Add To Cart &#8594;
+            </button>
+
+            @if (!string.IsNullOrWhiteSpace(msg))
+            {
+                <p style="margin-top:10px; font-size:13px; color:#a33;">@msg</p>
+            }
+
+            <h3>Product Details <i class="fa fa-indent"></i></h3>
+            <p>Sterling Silver Ivy Vine Art Nouveau Earrings ~ Like Fake Gauges but fit Standard Piercings ~ Fairy Elven Forest Spiral Festival Earrings</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool menuOpen = false;
+    private void ToggleMenu() => menuOpen = !menuOpen;
+
+    private string MainImage = "images/image-gallery0.jpg";
+    private void SelectImage(string img) => MainImage = img;
+
+    private int qty = 1;
+    private string msg = "";
+
+    private async Task AddLeafToCart()
+    {
+        msg = "";
+        if (qty < 1) qty = 1;
+
+      
+        var p = Db.Products.FirstOrDefault(x =>
+            x.Name.ToLower().Trim() == "silver leaf earrings");
+
+        if (p == null)
+        {
+            msg = "Product not found in database.";
+            return;
+        }
+
+        var (ok, m) = await CartSvc.AddAsync(p.Id, qty);
+        if (ok) Nav.NavigateTo("/cart");
+        else msg = m;
+    }
+}
+

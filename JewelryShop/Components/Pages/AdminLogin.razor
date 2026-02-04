@@ -1,0 +1,45 @@
+@page "/admin/login"
+@rendermode InteractiveServer
+
+@inject JewelryShop.Services.AdminSession AdminSession
+@inject NavigationManager Nav
+
+<h3>Admin Login</h3>
+
+<div style="max-width: 320px;">
+    <div>
+        <input placeholder="Username" @bind="username" />
+    </div>
+
+    <div style="margin-top: 8px;">
+        <input type="password" placeholder="Password" @bind="password" />
+    </div>
+
+    <button type="button" style="margin-top: 12px;" @onclick="HandleLogin">Login</button>
+
+   @if (!string.IsNullOrEmpty(error))
+{
+    <p style="color:red">@error</p>
+}
+
+</div>
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string error = "";
+
+    private void HandleLogin()
+{
+    error = "";
+
+    if (AdminSession.Login(username, password))
+    {
+        Nav.NavigateTo("/admin/products", forceLoad: true);
+    }
+    else
+    {
+        error = "Λάθος username ή password. Παρακαλώ δοκιμάστε ξανά.";
+    }
+}
+}

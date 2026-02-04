@@ -1,0 +1,212 @@
+@page "/account"
+
+<div class="container">
+    <div class="navbar">
+        <div class="logo">
+            <a href="/"><img src="images/logo2.png" width="300px"></a>
+        </div>
+
+        <nav>
+            <ul id="MenuItems" style="max-height:@(menuOpen ? "500px" : "0px")">
+                <li><a href="/">Home</a></li>
+                <li><a href="/products">Products</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/account">Account</a></li>
+            </ul>
+        </nav>
+
+        <a href="/cart">
+            <img src="images/cart.png" width="30px" height="30px" style="z-index: 1100; position: relative;">
+        </a>
+
+        <img src="images/menu.png" class="menu-icon" style="cursor:pointer;" @onclick="ToggleMenu" />
+    </div>
+</div>
+
+<!-----store account----->
+
+<div class="account-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <img src="images/face picture.png" width="100%">
+            </div>
+
+            <div class="col-2">
+                <div class="form-container">
+                    <div class="form-button">
+                        <span style="cursor:pointer;" @onclick="ShowLogin">Login</span>
+                        <span style="cursor:pointer;" @onclick="ShowRegister">Register</span>
+                        <hr id="Indicator" style="transform:@IndicatorTransform; transition: transform 1s;">
+                    </div>
+
+                    <!-- LOGIN FORM-->
+                    <form id="LoginForm"
+                          style="@LoginFormStyle"
+                          @onsubmit="HandleLogin"
+                          @onsubmit:preventDefault="true">
+                        <input type="text" placeholder="Username" @bind="loginUsername">
+                        <input type="password" placeholder="Password" @bind="loginPassword">
+
+                        <button type="submit" class="button">Login</button>
+                        <a href="">Forgot password</a>
+
+                        @if (!string.IsNullOrWhiteSpace(loginMsg))
+                        {
+                            <p style="font-size:14px; margin-top:10px; color:#8d4c55; font-weight:600;">
+                                @loginMsg
+                            </p>
+                        }
+                    </form>
+
+                    <!-- REGISTER FORM -->
+                    <form id="RegistrationForm"
+                          style="@RegisterFormStyle"
+                          @onsubmit="HandleRegister"
+                          @onsubmit:preventDefault="true">
+                        <input type="text" placeholder="Username" @bind="regUsername">
+                        <input type="email" placeholder="Email" @bind="regEmail">
+                        <input type="password" placeholder="Password" @bind="regPassword">
+
+                        <button type="submit" class="button">Register</button>
+
+                        @if (!string.IsNullOrWhiteSpace(registerMsg))
+                        {
+                            <p style="font-size:14px; margin-top:10px; color:#8d4c55; font-weight:600;">
+                                @registerMsg
+                            </p>
+                        }
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!----footer----->
+
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="footer-col-1">
+                <h3>Download Our App</h3>
+                <p>Download for mobile</p>
+                <div class="app-logo">
+                    <a href="https://www.apple.com/app-store/"><i class="fa-brands fa-app-store-ios fa-3x"></i></a>
+                    <a href="https://play.google.com/store/"><i class="fa-brands fa-google-play fa-3x"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col-2">
+                <img src="images/logo2.png">
+                <p>We Look Forward To Deliver The Finest Jewelry To Your Hands</p>
+            </div>
+
+            <div class="footer-col-3">
+                <h3>Useful Links</h3>
+                <ul>
+                    <li>Coupons</li>
+                    <li>Blog</li>
+                    <li>Return Policy</li>
+                    <li>Work With Us</li>
+                </ul>
+            </div>
+
+            <div class="footer-col-4">
+                <h3>Join our Socials</h3>
+                <ul>
+                    <li><a href="https://www.facebook.com/"><i class="fa-brands fa-facebook fa-xl"></i></a></li>
+                    <li><a href="https://x.com/"><i class="fa-brands fa-x-twitter fa-xl"></i></a></li>
+                    <li><a href="https://www.instagram.com/"><i class="fa-brands fa-instagram fa-xl"></i></a></li>
+                    <li><a href="https://www.tiktok.com/"><i class="fa-brands fa-tiktok fa-xl"></i></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <hr>
+        <p class="copyright">Copyright 2025-Aurora Jewelry | All Rights Reserved</p>
+    </div>
+</div>
+
+@code {
+    
+    private bool menuOpen = false;
+    private void ToggleMenu() => menuOpen = !menuOpen;
+
+    
+    private bool showRegister = false;
+    private void ShowLogin() => showRegister = false;
+    private void ShowRegister() => showRegister = true;
+
+    
+    private string LoginTransform => showRegister ? "translateX(0px)" : "translateX(300px)";
+    private string RegisterTransform => showRegister ? "translateX(0px)" : "translateX(300px)";
+
+    
+    private string IndicatorTransform => showRegister ? "translateX(100px)" : "translateX(0px)";
+
+    
+    private string LoginFormStyle =>
+        "max-width:300px; padding:0 20px; position:absolute; top:130px; transition: transform 1s; " +
+        "left:-300px; " +
+        $"transform:{LoginTransform}; " +
+        $"pointer-events:{(showRegister ? "none" : "auto")}; " +
+        $"opacity:{(showRegister ? "0" : "1")};";
+
+    private string RegisterFormStyle =>
+        "max-width:300px; padding:0 20px; position:absolute; top:130px; transition: transform 1s; " +
+        "left:0px; " +
+        $"transform:{RegisterTransform}; " +
+        $"pointer-events:{(showRegister ? "auto" : "none")}; " +
+        $"opacity:{(showRegister ? "1" : "0")};";
+
+    
+    private string loginUsername = "";
+    private string loginPassword = "";
+    private string loginMsg = "";
+
+    private string regUsername = "";
+    private string regEmail = "";
+    private string regPassword = "";
+    private string registerMsg = "";
+
+    private void HandleLogin()
+    {
+        
+        registerMsg = "";
+
+        if (string.IsNullOrWhiteSpace(loginUsername) || string.IsNullOrWhiteSpace(loginPassword))
+        {
+            loginMsg = "Please enter username and password.";
+            return;
+        }
+
+        loginMsg = $"Logged in as {loginUsername} (UI demo).";
+    }
+
+    private void HandleRegister()
+    {
+        
+        loginMsg = "";
+
+        if (string.IsNullOrWhiteSpace(regUsername) ||
+            string.IsNullOrWhiteSpace(regEmail) ||
+            string.IsNullOrWhiteSpace(regPassword))
+        {
+            registerMsg = "Please fill all fields.";
+            return;
+        }
+
+        
+        if (!regEmail.Contains("@") || !regEmail.Contains("."))
+        {
+            registerMsg = "Please enter a valid email.";
+            return;
+        }
+
+        registerMsg = $"Registered {regUsername} (UI demo).";
+    }
+}
+
